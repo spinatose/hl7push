@@ -33,6 +33,10 @@ func main () {
 	}
 }
 
+type MsgVals struct {
+	SendingFacility string `json:"sending_facility" yaml:"sending_facility"`
+}
+
 func hl7WebStoreInstance(hl7Path, hl7File string) error {
     ctx := context.Background()
 
@@ -41,6 +45,16 @@ func hl7WebStoreInstance(hl7Path, hl7File string) error {
 	if err != nil {
 		return err
 	}
+
+	// Get SendingFacility from header of message
+	hdr, err := hl7.GetMessageHeader(*msg)
+	if err != nil {
+		return  err
+	}
+
+	fmt.Println()
+	fmt.Printf("Sending Facility for Message is %s\n", hdr.SendingFacility)
+	fmt.Println()
 
 	hl7Data := msg.Raw()
 	hl7Data = append(hl7Data, []byte("ZAC|" + time.Now().Format("20060102150405.9999999999"))...)
