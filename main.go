@@ -15,10 +15,10 @@ import (
 const (
     projectID    = "devx-rpml" //"rpx-sandbox"
     location     = "us-central1" //"us-west2"
-    datasetID    = "inap-dev"  //"sandbox-hl7-store"
-    hl7StoreID   = "somehl7" //"dicom-store"
-	hl7Dir       = "/Users/scot/dev/temp/hl7vvh"
-	retainSent   = false 
+    datasetID    = "somehl7"  //"sandbox-hl7-store"
+    hl7StoreID   = "clitest" //"dicom-store"
+	hl7Dir       = "/Users/scot/dev/temp/hl7vvh3"
+	retainSent   = true 
 	loopit       = 1  // note - 0 will not do anything, 1 will loop once over dir, more than one will loop for that many times on target dir
 )
 
@@ -36,11 +36,13 @@ func main () {
 func hl7WebStoreInstance(hl7Path, hl7File string) error {
     ctx := context.Background()
 
-    hl7Data, err := ioutil.ReadFile(hl7Path + "/" + hl7File)
-    if err != nil {
-        return fmt.Errorf("ReadFile: %v", err)
-    }
+	// must run thru hl7 parse in order to remove invalid new line chars
+	msg, err := hl7.ParseFile(hl7Path + "/" + hl7File, true)
+	if err != nil {
+		return err
+	}
 
+	hl7Data := msg.Raw()
 	hl7Data = append(hl7Data, []byte("ZAC|" + time.Now().Format("20060102150405.9999999999"))...)
 	f, err := os.Create("./tmp/" + hl7File)
 	if err != nil {
@@ -52,6 +54,7 @@ func hl7WebStoreInstance(hl7Path, hl7File string) error {
 		return err
 	}
 	
+
 	tmpfile := "./tmp/" + hl7File
 	hl7Data2, err := ioutil.ReadFile(tmpfile)
 
