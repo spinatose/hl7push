@@ -9,11 +9,11 @@ import (
 	"strings"
 	"time"
 
-	hl7 "github.com/radpartners/go-hl7"
+	hl7 "github.com/go-hl7"
 )
 
 const (
-    projectID    = "devx-rpml" //"rpx-sandbox"
+    projectID    = "gcpproj"
     location     = "us-central1" //"us-west2"
     datasetID    = "somehl7"  //"sandbox-hl7-store"
     hl7StoreID   = "clitest" //"dicom-store"
